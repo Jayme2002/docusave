@@ -4,9 +4,13 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import React, { useState } from "react";
 import Input from "@/components/Input";
 import Link from "next/link";
+import { auth } from "@/firebase/config";
+import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { useRouter } from 'next/navigation';
 
-function Login() {
-  const [fisrtName, setFirstName] = useState("");
+function Signup() {
+  const router = useRouter();
+  const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -32,6 +36,31 @@ function Login() {
     setConfirmPassword(e.target.value);
   }
 
+  async function handleSignup() {
+    if (password !== confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+      router.push('/dashboard'); 
+    } catch (error) {
+      console.error("Error signing up:", error);
+      alert("Error signing up");
+    }
+  }
+
+  async function handleGoogleSignup() {
+    const provider = new GoogleAuthProvider();
+    try {
+      await signInWithPopup(auth, provider);
+      router.push('/dashboard');
+    } catch (error) {
+      console.error("Error signing up with Google:", error);
+      alert("Error signing up with Google");
+    }
+  }
+
   return (
     <>
       <p className="font-semibold mb-2 text-lg tracking-widest uppercase text-blue-500">
@@ -49,7 +78,7 @@ function Login() {
           type="text"
           placeholder="John"
           icon="tabler:user"
-          value={fisrtName}
+          value={firstName}
           onChange={updateFirstName}
         />
         <Input
@@ -94,7 +123,10 @@ function Login() {
         onChange={updateConfirmPassword}
       />
 
-      <button className="w-full bg-blue-500 font-semibold flex gap-2 transition-all hover:bg-blue-600 items-center justify-center shadow-md tracking-widest text-white py-4 rounded-md mt-8">
+      <button
+        className="w-full bg-blue-500 font-semibold flex gap-2 transition-all hover:bg-blue-600 items-center justify-center shadow-md tracking-widest text-white py-4 rounded-md mt-8"
+        onClick={handleSignup}
+      >
         Sign Up <Icon icon="uil:arrow-right" className="size-6" />
       </button>
       <div className="flex items-center justify-center mt-8 gap-4">
@@ -105,7 +137,10 @@ function Login() {
         <span className="block w-1/2 h-0.5 bg-zinc-300 dark:bg-zinc-600"></span>
       </div>
       <div className="flex items-center justify-center flex-col sm:flex-row gap-3 sm:gap-4 mt-8">
-        <button className="bg-zinc-100 dark:bg-zinc-800 shadow-sm w-full py-4 rounded-md  dark:hover:bg-zinc-700 font-semibold tracking-wider hover:bg-zinc-200 transition-all flex items-center justify-center gap-2">
+        <button
+          className="bg-zinc-100 dark:bg-zinc-800 shadow-sm w-full py-4 rounded-md  dark:hover:bg-zinc-700 font-semibold tracking-wider hover:bg-zinc-200 transition-all flex items-center justify-center gap-2"
+          onClick={handleGoogleSignup}
+        >
           <Icon icon="uil:google" className="size-6" />
           Google
         </button>
@@ -124,4 +159,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default Signup;
