@@ -3,24 +3,18 @@
 import { Icon } from "@iconify/react/dist/iconify.js";
 import Image from "next/image";
 import cover from "@/assets/cover.jpg";
-import React from "react";
+import React, { useEffect } from "react";
 import useAuth from "@/providers/useAuth";
 import { redirect } from "next/navigation";
 
 function AuthLayout({ children }: { children: React.ReactNode }) {
   const { loading, user } = useAuth();
 
-  if (loading) {
-    return (
-      <main className="flex items-center justify-center w-full">
-        <span className="loader"></span>
-      </main>
-    );
-  }
-
-  if (user) {
-    redirect("/dashboard");
-  }
+  useEffect(() => {
+    if (user && !loading) {
+      redirect("/dashboard");
+    }
+  }, [user, loading]);
 
   return (
     <>
