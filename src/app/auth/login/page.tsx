@@ -5,8 +5,12 @@ import React, { useState } from "react";
 import Input from "@/components/Input";
 import Link from "next/link";
 import { auth } from "@/firebase/config";
-import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { useRouter } from 'next/navigation';
+import {
+  signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+} from "firebase/auth";
+import { useRouter } from "next/navigation";
 
 function Login() {
   const router = useRouter();
@@ -24,7 +28,7 @@ function Login() {
   async function handleLogin() {
     try {
       await signInWithEmailAndPassword(auth, username, password);
-      router.push('/dashboard');
+      router.push("/dashboard");
     } catch (error) {
       console.error("Error logging in:", error);
       alert("Error logging in");
@@ -35,7 +39,7 @@ function Login() {
     const provider = new GoogleAuthProvider();
     try {
       await signInWithPopup(auth, provider);
-      router.push('/dashboard');
+      router.push("/dashboard");
     } catch (error) {
       console.error("Error logging in with Google:", error);
       alert("Error logging in with Google");

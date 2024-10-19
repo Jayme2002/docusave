@@ -1,6 +1,24 @@
+"use client";
+
+import useAuth from "@/providers/useAuth";
 import { Icon } from "@iconify/react/dist/iconify.js";
+import { redirect } from "next/navigation";
 
 export default function Home() {
+  const { loading, user } = useAuth();
+
+  if (loading) {
+    return (
+      <main className="flex items-center justify-center w-full">
+        <span className="loader"></span>
+      </main>
+    );
+  }
+
+  if (!user) {
+    redirect("/auth/login");
+  }
+
   return (
     <main className="flex items-center flex-col justify-center w-full">
       <div className="flex items-center justify-center gap-3">
