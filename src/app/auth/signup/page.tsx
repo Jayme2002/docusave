@@ -7,6 +7,8 @@ import Link from "next/link";
 import { auth } from "@/firebase/config";
 import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useRouter } from 'next/navigation';
+import { db } from "@/firebase/config";
+import { doc, setDoc } from "firebase/firestore";
 
 function Signup() {
   const router = useRouter();
@@ -42,7 +44,18 @@ function Signup() {
       return;
     }
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      // Store user data in Firestore
+      await setDoc(doc(db, "users", user.uid), {
+        email: user.email,
+        uid: user.uid,
+        firstName: firstName,
+        lastName: lastName,
+        createdAt: new Date()
+      });
+
       router.push('/dashboard'); 
     } catch (error) {
       console.error("Error signing up:", error);
@@ -53,7 +66,16 @@ function Signup() {
   async function handleGoogleSignup() {
     const provider = new GoogleAuthProvider();
     try {
-      await signInWithPopup(auth, provider);
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+
+      // Store user data in Firestore
+      await setDoc(doc(db, "users", user.uid), {
+        email: user.email,
+        uid: user.uid,
+        createdAt: new Date()
+      }, { merge: true });
+
       router.push('/dashboard');
     } catch (error) {
       console.error("Error signing up with Google:", error);

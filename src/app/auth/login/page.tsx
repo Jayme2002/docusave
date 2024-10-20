@@ -7,6 +7,8 @@ import Link from "next/link";
 import { getAuth, setPersistence, inMemoryPersistence, browserLocalPersistence } from "firebase/auth";
 import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useRouter } from 'next/navigation';
+import { db } from "@/firebase/config";
+import { doc, setDoc } from "firebase/firestore";
 
 function Login() {
   const router = useRouter();
@@ -28,7 +30,16 @@ function Login() {
 
     try {
       await setPersistence(auth, persistence);
-      await signInWithEmailAndPassword(auth, username, password);
+      const userCredential = await signInWithEmailAndPassword(auth, username, password);
+      const user = userCredential.user;
+
+      // Store user data in Firestore
+      await setDoc(doc(db, "users", user.uid), {
+        email: user.email,
+        uid: user.uid,
+        lastSignIn: new Date()
+      }, { merge: true });
+
       router.push('/dashboard');
     } catch (error) {
       console.error("Error logging in:", error);
@@ -43,7 +54,16 @@ function Login() {
 
     try {
       await setPersistence(auth, persistence);
-      await signInWithPopup(auth, provider);
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+
+      // Store user data in Firestore
+      await setDoc(doc(db, "users", user.uid), {
+        email: user.email,
+        uid: user.uid,
+        lastSignIn: new Date()
+      }, { merge: true });
+
       router.push('/dashboard');
     } catch (error) {
       console.error("Error logging in with Google:", error);
