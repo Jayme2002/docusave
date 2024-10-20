@@ -4,17 +4,20 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import React, { useState } from "react";
 import Input from "@/components/Input";
 import Link from "next/link";
-import { getAuth, setPersistence, inMemoryPersistence, browserLocalPersistence } from "firebase/auth";
-import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { useRouter } from 'next/navigation';
-import { db } from "@/firebase/config";
+import { getAuth } from "firebase/auth";
+import {
+  signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+} from "firebase/auth";
+import { useRouter } from "next/navigation";
+import { auth, db } from "@/firebase/config";
 import { doc, setDoc } from "firebase/firestore";
 
 function Login() {
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
 
   function updateUsername(e: React.ChangeEvent<HTMLInputElement>) {
     setUsername(e.target.value);
@@ -25,22 +28,24 @@ function Login() {
   }
 
   async function handleLogin() {
-    const auth = getAuth();
-    const persistence = rememberMe ? browserLocalPersistence : inMemoryPersistence;
-
     try {
-      await setPersistence(auth, persistence);
-      const userCredential = await signInWithEmailAndPassword(auth, username, password);
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        username,
+        password
+      );
       const user = userCredential.user;
 
       // Store user data in Firestore
-      await setDoc(doc(db, "users", user.uid), {
-        email: user.email,
-        uid: user.uid,
-        lastSignIn: new Date()
-      }, { merge: true });
-
-      router.push('/dashboard');
+      await setDoc(
+        doc(db, "users", user.uid),
+        {
+          email: user.email,
+          uid: user.uid,
+          lastSignIn: new Date(),
+        },
+        { merge: true }
+      );
     } catch (error) {
       console.error("Error logging in:", error);
       alert("Error logging in");
@@ -50,21 +55,23 @@ function Login() {
   async function handleGoogleLogin() {
     const auth = getAuth();
     const provider = new GoogleAuthProvider();
-    const persistence = rememberMe ? browserLocalPersistence : inMemoryPersistence;
 
     try {
-      await setPersistence(auth, persistence);
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
 
       // Store user data in Firestore
-      await setDoc(doc(db, "users", user.uid), {
-        email: user.email,
-        uid: user.uid,
-        lastSignIn: new Date()
-      }, { merge: true });
+      await setDoc(
+        doc(db, "users", user.uid),
+        {
+          email: user.email,
+          uid: user.uid,
+          lastSignIn: new Date(),
+        },
+        { merge: true }
+      );
 
-      router.push('/dashboard');
+      router.push("/dashboard");
     } catch (error) {
       console.error("Error logging in with Google:", error);
       alert("Error logging in with Google");
@@ -100,30 +107,16 @@ function Login() {
         value={password}
         onChange={updatePassword}
       />
-      <div className="flex items-center justify-between mt-6">
-        <div className="flex items-center gap-2">
-          <input 
-            type="checkbox" 
-            id="remember" 
-            checked={rememberMe} 
-            onChange={() => setRememberMe(!rememberMe)} 
-          />
-          <label
-            htmlFor="remember"
-            className="text-zinc-400 dark:text-zinc-500"
-          >
-            Remember me
-          </label>
-        </div>
+      <div className="flex items-center justify-end mt-6">
         <button
           className="text-blue-500"
-          onClick={() => router.push('/auth/forgotPassword')}
+          onClick={() => router.push("/auth/forgotPassword")}
         >
           Forgot Password?
         </button>
       </div>
       <button
-        className="w-full bg-blue-500 font-semibold flex gap-2 transition-transform duration-200 hover:bg-blue-600 items-center justify-center shadow-md tracking-widest text-white py-4 rounded-md mt-8 transform active:scale-95"
+        className="w-full bg-blue-500 font-semibold flex gap-2 transition-all duration-200 hover:bg-blue-600 items-center justify-center shadow-md tracking-widest text-white py-4 rounded-md mt-8 transform active:scale-95"
         onClick={handleLogin}
       >
         Sign In <Icon icon="uil:arrow-right" className="size-6" />
