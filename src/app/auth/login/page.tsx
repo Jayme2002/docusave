@@ -4,11 +4,13 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import React, { useState } from "react";
 import Input from "@/components/Input";
 import Link from "next/link";
-import { getAuth } from "firebase/auth";
 import {
   signInWithEmailAndPassword,
   GoogleAuthProvider,
   signInWithPopup,
+  setPersistence,
+  browserSessionPersistence,
+  browserLocalPersistence,
 } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { auth, db } from "@/firebase/config";
@@ -18,6 +20,7 @@ function Login() {
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
 
   function updateUsername(e: React.ChangeEvent<HTMLInputElement>) {
     setUsername(e.target.value);
@@ -29,6 +32,11 @@ function Login() {
 
   async function handleLogin() {
     try {
+      await setPersistence(
+        auth,
+        rememberMe ? browserLocalPersistence : browserSessionPersistence
+      );
+
       const userCredential = await signInWithEmailAndPassword(
         auth,
         username,
@@ -53,10 +61,14 @@ function Login() {
   }
 
   async function handleGoogleLogin() {
-    const auth = getAuth();
     const provider = new GoogleAuthProvider();
 
     try {
+      await setPersistence(
+        auth,
+        rememberMe ? browserLocalPersistence : browserSessionPersistence
+      );
+
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
 
@@ -107,7 +119,16 @@ function Login() {
         value={password}
         onChange={updatePassword}
       />
-      <div className="flex items-center justify-end mt-6">
+      <div className="flex items-center justify-between mt-6">
+        <label className="flex items-center">
+          <input
+            type="checkbox"
+            className="mr-2"
+            checked={rememberMe}
+            onChange={() => setRememberMe(!rememberMe)}
+          />
+          <span className="text-zinc-400 dark:text-zinc-500">Remember me</span>
+        </label>
         <button
           className="text-blue-500"
           onClick={() => router.push("/auth/forgotPassword")}
