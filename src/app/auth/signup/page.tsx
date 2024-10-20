@@ -24,8 +24,8 @@ function Signup() {
   const { user, loading } = useAuth();
 
   useEffect(() => {
-    if (!loading && !user) {
-      redirect("/auth/login");
+    if (!loading && user) {
+      redirect("/dashboard");
     }
   }, [loading, user]);
 

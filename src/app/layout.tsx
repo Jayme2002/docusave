@@ -18,7 +18,7 @@ export default function RootLayout({
             <span className="loader" />
           </main>
           <footer className="absolute bottom-4 left-4 text-zinc-300 dark:text-zinc-700 text-sm">
-            <p>in-dev v.24w42</p>
+            <p>in-dev v.24w43</p>
           </footer>
         </body>
       </html>
@@ -30,7 +30,7 @@ export default function RootLayout({
       <body className="w-full h-dvh overflow-y-auto bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-100">
         <main className="flex h-full w-full">{children}</main>
         <footer className="absolute bottom-4 left-4 text-zinc-300 dark:text-zinc-700 text-sm">
-          <p>in-dev v.24w42</p>
+          <p>in-dev v.24w43</p>
         </footer>
       </body>
     </html>

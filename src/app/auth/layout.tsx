@@ -6,6 +6,7 @@ import cover from "@/assets/cover.jpg";
 import React from "react";
 import useAuth from "@/providers/useAuth";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 
 function AuthLayout({ children }: { children: React.ReactNode }) {
   const { loading, user } = useAuth();
@@ -18,12 +19,15 @@ function AuthLayout({ children }: { children: React.ReactNode }) {
     <>
       <div className="w-full xl:w-1/2 flex flex-col">
         <header className="w-full p-8 flex items-center justify-between">
-          <h1 className="text-xl flex items-center gap-2 font-semibold tracking-wider">
+          <Link
+            href="/"
+            className="text-xl flex items-center gap-2 font-semibold tracking-wider"
+          >
             <Icon icon="mdi:anvil" className="size-8 text-blue-500" />
             <span className="-mt-2">
               LifeForge<span className="text-blue-500 text-3xl">.</span>
             </span>
-          </h1>
+          </Link>
         </header>
         <div className="flex-1 w-full flex justify-center flex-col px-12 pb-8 sm:px-20 md:px-32">
           {children}
