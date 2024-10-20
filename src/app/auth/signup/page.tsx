@@ -1,22 +1,33 @@
 "use client";
 
 import { Icon } from "@iconify/react/dist/iconify.js";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Input from "@/components/Input";
 import Link from "next/link";
 import { auth } from "@/firebase/config";
-import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { useRouter } from 'next/navigation';
+import {
+  createUserWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+} from "firebase/auth";
+import { redirect } from "next/navigation";
 import { db } from "@/firebase/config";
 import { doc, setDoc } from "firebase/firestore";
+import useAuth from "@/providers/useAuth";
 
 function Signup() {
-  const router = useRouter();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const { user, loading } = useAuth();
+
+  useEffect(() => {
+    if (!loading && !user) {
+      redirect("/auth/login");
+    }
+  }, [loading, user]);
 
   function updateFirstName(e: React.ChangeEvent<HTMLInputElement>) {
     setFirstName(e.target.value);
@@ -44,7 +55,11 @@ function Signup() {
       return;
     }
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
       const user = userCredential.user;
 
       // Store user data in Firestore
@@ -53,10 +68,10 @@ function Signup() {
         uid: user.uid,
         firstName: firstName,
         lastName: lastName,
-        createdAt: new Date()
+        createdAt: new Date(),
       });
 
-      router.push('/dashboard'); 
+      redirect("/dashboard");
     } catch (error) {
       console.error("Error signing up:", error);
       alert("Error signing up");
@@ -70,13 +85,17 @@ function Signup() {
       const user = result.user;
 
       // Store user data in Firestore
-      await setDoc(doc(db, "users", user.uid), {
-        email: user.email,
-        uid: user.uid,
-        createdAt: new Date()
-      }, { merge: true });
+      await setDoc(
+        doc(db, "users", user.uid),
+        {
+          email: user.email,
+          uid: user.uid,
+          createdAt: new Date(),
+        },
+        { merge: true }
+      );
 
-      router.push('/dashboard');
+      redirect("/dashboard");
     } catch (error) {
       console.error("Error signing up with Google:", error);
       alert("Error signing up with Google");
@@ -85,7 +104,7 @@ function Signup() {
 
   return (
     <>
-      <p className="font-semibold mb-2 text-lg tracking-widest uppercase text-blue-500 transform transition-transform duration-200 active:scale-95">
+      <p className="font-semibold mb-2 text-lg tracking-widest uppercase text-blue-500 transform transition-all duration-200 active:scale-95">
         Sign Up
       </p>
       <h1 className="text-5xl font-semibold tracking-wide">Create Account</h1>

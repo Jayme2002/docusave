@@ -15,7 +15,7 @@ function useAuth() {
     });
 
     return unsubscribe;
-  }, [user]);
+  }, []);
 
   return { user, loading };
 }

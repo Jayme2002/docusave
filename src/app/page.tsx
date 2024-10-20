@@ -1,10 +1,19 @@
-'use client'
+"use client";
 
+import useAuth from "@/providers/useAuth";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { useRouter } from 'next/navigation';
+import { redirect, useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function Home() {
   const router = useRouter();
+  const { loading, user } = useAuth();
+
+  useEffect(() => {
+    if (!loading && user) {
+      redirect("/dashboard");
+    }
+  }, [loading, user]);
 
   return (
     <main className="flex items-center flex-col justify-center w-full">
@@ -19,9 +28,9 @@ export default function Home() {
         An all-in-one platform for managing your life.
       </p>
       <p className="mt-20 text-3xl uppercase tracking-widest">Coming Soon!</p>
-      <button 
+      <button
         className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-        onClick={() => router.push('auth/login')}
+        onClick={() => router.push("auth/login")}
       >
         Sign In
       </button>

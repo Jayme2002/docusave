@@ -3,18 +3,16 @@
 import { Icon } from "@iconify/react/dist/iconify.js";
 import Image from "next/image";
 import cover from "@/assets/cover.jpg";
-import React, { useEffect } from "react";
+import React from "react";
 import useAuth from "@/providers/useAuth";
 import { redirect } from "next/navigation";
 
 function AuthLayout({ children }: { children: React.ReactNode }) {
   const { loading, user } = useAuth();
 
-  useEffect(() => {
-    if (user && !loading) {
-      redirect("/dashboard");
-    }
-  }, [user, loading]);
+  if (user && !loading) {
+    redirect("/dashboard");
+  }
 
   return (
     <>

@@ -1,29 +1,36 @@
-"use client"
+"use client";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { getAuth, signOut } from "firebase/auth";
+import { redirect, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { signOut } from "firebase/auth";
+import { auth } from "@/firebase/config";
+import useAuth from "@/providers/useAuth";
 
 export default function Home() {
-  const router = useRouter();
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const auth = getAuth();
+  const { loading, user } = useAuth();
+  const router = useRouter();
 
   const handleLogout = () => {
     signOut(auth)
       .then(() => {
         setDropdownOpen(false);
-        router.push('/');
       })
       .catch((error) => {
         console.error("Error signing out: ", error);
       });
   };
 
+  useEffect(() => {
+    if (!loading && !user) {
+      redirect("/auth/login");
+    }
+  }, [loading, user, router]);
+
   return (
     <main className="flex items-center flex-col justify-center w-full relative">
       <div className="absolute top-4 right-4">
-        <button 
+        <button
           className="flex items-center gap-2 px-3 py-2 bg-gray-200 rounded-full"
           onClick={() => setDropdownOpen(!dropdownOpen)}
         >
@@ -32,7 +39,7 @@ export default function Home() {
         </button>
         {dropdownOpen && (
           <div className="absolute right-0 mt-2 w-48 bg-white border rounded shadow-lg">
-            <button 
+            <button
               className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
               onClick={handleLogout}
             >

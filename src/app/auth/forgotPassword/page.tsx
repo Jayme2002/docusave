@@ -2,7 +2,7 @@
 
 import { Icon } from "@iconify/react/dist/iconify.js";
 import React, { useState } from "react";
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 import { auth } from "@/firebase/config";
 import { sendPasswordResetEmail } from "firebase/auth";
 import Input from "@/components/Input";
@@ -15,7 +15,7 @@ export default function ForgotPassword() {
     try {
       await sendPasswordResetEmail(auth, email);
       alert('Sent! Please make sure to check your "junk" folder.');
-      router.push('/auth/login');
+      router.push("/auth/login");
     } catch (error) {
       if (error instanceof Error) {
         const errorMessage = error.message;
@@ -23,21 +23,23 @@ export default function ForgotPassword() {
         alert(`Error sending password reset email: ${errorMessage}`);
       } else {
         console.error("Unknown error sending password reset email");
-        alert("An unknown error occurred while sending the password reset email");
+        alert(
+          "An unknown error occurred while sending the password reset email"
+        );
       }
     }
   }
 
   return (
-    <main className="flex items-center flex-col justify-center w-full">
-      <div className="flex items-center justify-center gap-3">
-        <Icon icon="mdi:anvil" className="size-12 text-blue-500" />
-        <h1 className="text-3xl font-semibold -mt-3">
-          Password Reset
-          <span className="text-blue-500 text-5xl pl-1"></span>
-        </h1>
-      </div>
-      
+    <>
+      <p className="font-semibold mb-2 text-lg tracking-widest uppercase text-blue-500 transform transition-transform duration-200 active:scale-95">
+        Sign In
+      </p>
+      <h1 className="text-5xl font-semibold tracking-wide">Welcome Back!</h1>
+      <p className="text-zinc-400 dark:text-zinc-500 mt-2 mb-6 text-lg">
+        Sign in to your account to continue forging your life.
+      </p>
+
       <Input
         id="email"
         name="email"
@@ -48,13 +50,12 @@ export default function ForgotPassword() {
         value={email}
         onChange={(e) => setEmail(e.target.value)}
       />
-      
-      <button 
-        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded transform transition-transform duration-200 active:scale-95"
+      <button
+        className="w-full bg-blue-500 font-semibold flex gap-2 transition-all duration-200 hover:bg-blue-600 items-center justify-center shadow-md tracking-widest text-white py-4 rounded-md mt-8 transform active:scale-95"
         onClick={handlePasswordReset}
       >
-        Send Link
+        Send Link <Icon icon="uil:arrow-right" className="size-6" />
       </button>
-    </main>
+    </>
   );
 }
