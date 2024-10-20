@@ -63,7 +63,7 @@ function Signup() {
 
   return (
     <>
-      <p className="font-semibold mb-2 text-lg tracking-widest uppercase text-blue-500">
+      <p className="font-semibold mb-2 text-lg tracking-widest uppercase text-blue-500 transform transition-transform duration-200 active:scale-95">
         Sign Up
       </p>
       <h1 className="text-5xl font-semibold tracking-wide">Create Account</h1>

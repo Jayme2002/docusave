@@ -4,18 +4,15 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import React, { useState } from "react";
 import Input from "@/components/Input";
 import Link from "next/link";
-import { auth } from "@/firebase/config";
-import {
-  signInWithEmailAndPassword,
-  GoogleAuthProvider,
-  signInWithPopup,
-} from "firebase/auth";
-import { useRouter } from "next/navigation";
+import { getAuth, setPersistence, inMemoryPersistence, browserLocalPersistence } from "firebase/auth";
+import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { useRouter } from 'next/navigation';
 
 function Login() {
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
 
   function updateUsername(e: React.ChangeEvent<HTMLInputElement>) {
     setUsername(e.target.value);
@@ -26,9 +23,13 @@ function Login() {
   }
 
   async function handleLogin() {
+    const auth = getAuth();
+    const persistence = rememberMe ? browserLocalPersistence : inMemoryPersistence;
+
     try {
+      await setPersistence(auth, persistence);
       await signInWithEmailAndPassword(auth, username, password);
-      router.push("/dashboard");
+      router.push('/dashboard');
     } catch (error) {
       console.error("Error logging in:", error);
       alert("Error logging in");
@@ -36,10 +37,14 @@ function Login() {
   }
 
   async function handleGoogleLogin() {
+    const auth = getAuth();
     const provider = new GoogleAuthProvider();
+    const persistence = rememberMe ? browserLocalPersistence : inMemoryPersistence;
+
     try {
+      await setPersistence(auth, persistence);
       await signInWithPopup(auth, provider);
-      router.push("/dashboard");
+      router.push('/dashboard');
     } catch (error) {
       console.error("Error logging in with Google:", error);
       alert("Error logging in with Google");
@@ -48,7 +53,7 @@ function Login() {
 
   return (
     <>
-      <p className="font-semibold mb-2 text-lg tracking-widest uppercase text-blue-500">
+      <p className="font-semibold mb-2 text-lg tracking-widest uppercase text-blue-500 transform transition-transform duration-200 active:scale-95">
         Sign In
       </p>
       <h1 className="text-5xl font-semibold tracking-wide">Welcome Back!</h1>
@@ -77,7 +82,12 @@ function Login() {
       />
       <div className="flex items-center justify-between mt-6">
         <div className="flex items-center gap-2">
-          <input type="checkbox" id="remember" />
+          <input 
+            type="checkbox" 
+            id="remember" 
+            checked={rememberMe} 
+            onChange={() => setRememberMe(!rememberMe)} 
+          />
           <label
             htmlFor="remember"
             className="text-zinc-400 dark:text-zinc-500"
@@ -85,12 +95,15 @@ function Login() {
             Remember me
           </label>
         </div>
-        <a href="#" className="text-blue-500">
+        <button
+          className="text-blue-500"
+          onClick={() => router.push('/auth/forgotPassword')}
+        >
           Forgot Password?
-        </a>
+        </button>
       </div>
       <button
-        className="w-full bg-blue-500 font-semibold flex gap-2 transition-all hover:bg-blue-600 items-center justify-center shadow-md tracking-widest text-white py-4 rounded-md mt-8"
+        className="w-full bg-blue-500 font-semibold flex gap-2 transition-transform duration-200 hover:bg-blue-600 items-center justify-center shadow-md tracking-widest text-white py-4 rounded-md mt-8 transform active:scale-95"
         onClick={handleLogin}
       >
         Sign In <Icon icon="uil:arrow-right" className="size-6" />

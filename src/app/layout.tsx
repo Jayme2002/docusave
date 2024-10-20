@@ -1,6 +1,8 @@
 "use client";
 
 import useAuth from "@/providers/useAuth";
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 import "./globals.css";
 
 export default function RootLayout({
@@ -8,7 +10,18 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { loading } = useAuth();
+  const { loading, user } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading) {
+      if (user) {
+        router.push('/dashboard');
+      } else {
+        router.push('/');
+      }
+    }
+  }, [loading, user, router]);
 
   if (loading) {
     return (
