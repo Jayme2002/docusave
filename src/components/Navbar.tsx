@@ -3,9 +3,11 @@
 import { Icon } from "@iconify/react/dist/iconify.js";
 import Link from "next/link";
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 
 function Navbar() {
   const [navOpen, setNavOpen] = useState(false);
+  const router = useRouter();
 
   return (
     <>
@@ -18,16 +20,25 @@ function Navbar() {
           </h1>
         </Link>
         <div className="static xl:absolute font-medium left-1/2 top-1/2 xl:-translate-x-1/2 xl:-translate-y-1/2 hidden lg:flex items-center gap-12">
-          <button className="flex items-center gap-2">
+          <button className="flex items-center gap-2" >
             Features
             <Icon icon="tabler:chevron-down" className="size-4" />
           </button>
+          
           <button className="flex items-center gap-2">
             Solutions
             <Icon icon="tabler:chevron-down" className="size-4" />
           </button>
-          <button>Pricing</button>
-          <button>Blog</button>
+          <button 
+            onClick={() => router.push("pricing")}
+          >
+            Pricing
+          </button>
+          <button 
+            onClick={() => router.push("blog")}
+          >
+            Blog
+          </button>
         </div>
         <div className="hidden md:flex items-center gap-4">
           <Link
@@ -44,7 +55,10 @@ function Navbar() {
             <Icon icon="tabler:arrow-right" className="size-5" />
           </Link>
         </div>
-        <button onClick={() => setNavOpen(!navOpen)} className="md:hidden">
+        <button 
+          onClick={() => setNavOpen(!navOpen)} 
+          className="md:hidden"
+        >
           <Icon icon="tabler:menu" className="size-6" />
         </button>
       </nav>
@@ -53,10 +67,26 @@ function Navbar() {
           navOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <button>Features</button>
-        <button>Solutions</button>
-        <button>Pricing</button>
-        <button>Blog</button>
+        <button 
+          onClick={() => { router.push("/features"); setNavOpen(false); }}
+        >
+          Features
+        </button>
+        <button 
+          onClick={() => { router.push("/solutions"); setNavOpen(false); }}
+        >
+          Solutions
+        </button>
+        <button 
+          onClick={() => { router.push("/pricing"); setNavOpen(false); }}
+        >
+          Pricing
+        </button>
+        <button 
+          onClick={() => { router.push("/blog"); setNavOpen(false); }}
+        >
+          Blog
+        </button>
       </div>
     </>
   );
