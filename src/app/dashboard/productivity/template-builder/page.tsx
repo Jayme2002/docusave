@@ -33,16 +33,29 @@ export default function TemplateBuilder() {
     fetchToken();
   }, []);
 
-  const handleTemplateChange = (templateData: any) => {
-    console.log('Template data received:', {
-      id: templateData.id,
-      name: templateData.name,
-      schema: templateData.schema,
-      fields: templateData.fields,
-      document_urls: templateData.document_urls,
-      preview_url: templateData.preview_url
-    });
-    setPendingTemplate(templateData);
+  const handleTemplateChange = async (templateData: any) => {
+    console.log('Template data received:', templateData);
+    
+    try {
+      // Fetch complete template data from Docuseal
+      const response = await fetch(`/api/templates/fetch?templateId=${templateData.id}`);
+      const data = await response.json();
+      
+      if (data.error) {
+        throw new Error(data.error);
+      }
+  
+      // Combine the data
+      setPendingTemplate({
+        ...templateData,
+        pdfUrl: data.pdfUrl,
+        preview_url: data.previewUrl,
+        docusealData: data.templateData
+      });
+    } catch (err) {
+      console.error('Error fetching template details:', err);
+      setError('Failed to fetch template details');
+    }
   };
 
   const handleSaveClick = async () => {
@@ -53,6 +66,8 @@ export default function TemplateBuilder() {
   
     setIsSaving(true);
     try {
+      console.log('Template data to save:', pendingTemplate);
+      
       const response = await fetch('/api/templates/save', {
         method: 'POST',
         headers: {
@@ -75,8 +90,8 @@ export default function TemplateBuilder() {
         router.push('/dashboard/productivity/templates');
       }
     } catch (err) {
+      console.error('Save error:', err);
       setError('Failed to save template');
-      console.error(err);
     } finally {
       setIsSaving(false);
     }
