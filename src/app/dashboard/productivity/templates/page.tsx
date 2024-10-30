@@ -1,138 +1,107 @@
-"use client";
+'use client';
 
-import useAuth from "@/providers/useAuth";
 import { useEffect, useState } from 'react';
-import { db } from "@/firebase/config";
-import { collection, query, where, getDocs, deleteDoc, doc } from "firebase/firestore";
-import Link from "next/link";
+import { useRouter } from 'next/navigation';
+import useAuth from '@/providers/useAuth';
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { useRouter } from "next/navigation";
+import { collection, query, where, getDocs } from 'firebase/firestore';
+import { db } from '@/firebase/config';
 
 interface Template {
   id: string;
   name: string;
-  createdAt: Date;
+  preview_url: string;
   external_id: string;
-  document_urls?: string[];
-  preview_url?: string;
-  pdfUrl?: string;
+  createdAt: any;
 }
 
 export default function Templates() {
-  const { user } = useAuth();
   const router = useRouter();
+  const { user } = useAuth();
   const [templates, setTemplates] = useState<Template[]>([]);
   const [loading, setLoading] = useState(true);
-
-  const fetchTemplates = async () => {
-    if (!user?.uid) return;
-
-    try {
-      const q = query(
-        collection(db, "templates"),
-        where("userId", "==", user.uid)
-      );
-      
-      const querySnapshot = await getDocs(q);
-      const templatesData = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-        createdAt: doc.data().createdAt?.toDate()
-      })) as Template[];
-
-      setTemplates(templatesData);
-    } catch (error) {
-      console.error("Error fetching templates:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchTemplates();
-  }, [user?.uid]);
+    const fetchTemplates = async () => {
+      if (!user?.uid) return;
 
-  const handleDelete = async (templateId: string) => {
-    if (confirm("Are you sure you want to delete this template?")) {
       try {
-        await deleteDoc(doc(db, "templates", templateId));
-        await fetchTemplates(); // Refresh the list
-      } catch (error) {
-        console.error("Error deleting template:", error);
-      }
-    }
-  };
+        const q = query(
+          collection(db, "templates"),
+          where("userId", "==", user.uid)
+        );
 
-  const handleEdit = (template: Template) => {
-    router.push(`/dashboard/productivity/template-builder?templateId=${template.id}`);
-  };
+        const querySnapshot = await getDocs(q);
+        const templatesData = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        })) as Template[];
+
+        setTemplates(templatesData);
+      } catch (err) {
+        console.error('Error fetching templates:', err);
+        setError('Failed to load templates');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTemplates();
+  }, [user]);
+
+  if (loading) {
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return <div className="p-4 text-red-500">Error: {error}</div>;
+  }
 
   return (
-    <div className="w-full flex-1 shadow-lg h-full p-16 bg-zinc-50 rounded-xl">
+    <div className="w-full flex-1 shadow-lg h-full p-8 bg-zinc-50 rounded-xl">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-bold">Templates</h1>
-        <Link 
-          href="/dashboard/productivity/template-builder"
-          className="px-4 py-2 bg-blue-500 text-white rounded-md flex items-center gap-2 hover:bg-blue-600 transition-colors"
+        <button
+          onClick={() => router.push('/dashboard/productivity/template-builder')}
+          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 flex items-center gap-2"
         >
           <Icon icon="tabler:plus" className="size-5" />
           New Template
-        </Link>
+        </button>
       </div>
 
-      {loading ? (
-        <div className="flex justify-center">
-          <span className="loader" />
-        </div>
-      ) : templates.length === 0 ? (
-        <div className="text-center text-zinc-500 mt-8">
-          <p>No templates yet. Create your first template!</p>
+      {templates.length === 0 ? (
+        <div className="text-center py-12">
+          <p className="text-gray-500">No templates yet. Create your first template!</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {templates.map((template) => (
-            <div 
+            <div
               key={template.id}
-              className="p-4 border border-zinc-200 rounded-lg hover:border-blue-500 transition-colors"
+              className="bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer"
+              onClick={() => router.push(`/dashboard/productivity/templates/${template.external_id}`)}
             >
-              <div className="flex justify-between items-start mb-4">
-                <div>
-                  <h3 className="font-semibold text-lg">{template.name}</h3>
-                  <p className="text-sm text-zinc-500">
-                    Created: {template.createdAt.toLocaleDateString()}
-                  </p>
+              {template.preview_url ? (
+                <img
+                  src={template.preview_url}
+                  alt={template.name}
+                  className="w-full h-48 object-cover rounded-md mb-4"
+                />
+              ) : (
+                <div className="w-full h-48 bg-gray-100 rounded-md mb-4 flex items-center justify-center">
+                  <Icon icon="tabler:file-text" className="size-12 text-gray-400" />
                 </div>
-                <div className="flex gap-2">
-                  <button 
-                    onClick={() => handleEdit(template)}
-                    className="text-blue-500 hover:text-blue-600"
-                  >
-                    <Icon icon="tabler:edit" className="size-5" />
-                  </button>
-                  <button 
-                    onClick={() => handleDelete(template.id)}
-                    className="text-red-500 hover:text-red-600"
-                  >
-                    <Icon icon="tabler:trash" className="size-5" />
-                  </button>
-                </div>
-              </div>
-              <div className="w-full h-[400px] border rounded-md overflow-hidden bg-white">
-                {(template.pdfUrl || template.preview_url) ? (
-                  <embed
-                    src={template.pdfUrl || template.preview_url}
-                    type="application/pdf"
-                    className="w-full h-full"
-                  />
-                ) : (
-                  <div className="flex items-center justify-center h-full text-zinc-400">
-                    <div className="text-center">
-                      <p>No preview available</p>
-                      <p className="text-sm mt-2">Document URL: {template.document_urls?.[0] || 'None'}</p>
-                    </div>
-                  </div>
-                )}
-              </div>
+              )}
+              <h3 className="font-semibold text-lg mb-2">{template.name}</h3>
+              <p className="text-sm text-gray-500">
+                Created {template.createdAt?.toDate().toLocaleDateString()}
+              </p>
             </div>
           ))}
         </div>
