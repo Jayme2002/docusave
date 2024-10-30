@@ -97,13 +97,22 @@ export default function DashboardLayout({
                   Productivity
                 </h3>
                 <Link
-                  href="/dashboard/productivity/projects"
+                  href="/dashboard/productivity/templates"
                   className={`flex items-center gap-3 tracking-wide p-3 text-zinc-500 hover:bg-zinc-200/50 transition-all rounded-md ${
-                    pathname === "/dashboard/productivity/projects" ? "bg-zinc-200/70" : ""
+                    pathname === "/dashboard/productivity/templates" ? "bg-zinc-200/70" : ""
                   }`}
                 >
-                  <Icon icon="tabler:clipboard" className="size-6" />
-                  Projects
+                  <Icon icon="tabler:template" className="size-6" />
+                  Templates
+                </Link>
+                <Link
+                  href="/dashboard/productivity/template-builder"
+                  className={`flex items-center gap-3 tracking-wide p-3 text-zinc-500 hover:bg-zinc-200/50 transition-all rounded-md ${
+                    pathname === "/dashboard/productivity/template-builder" ? "bg-zinc-200/70" : ""
+                  }`}
+                >
+                  <Icon icon="tabler:template" className="size-6" />
+                  Template Builder
                 </Link>
                 <Link
                   href="/dashboard/productivity/calendar"
