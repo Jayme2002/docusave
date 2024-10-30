@@ -2,8 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { DocusealBuilder } from '@docuseal/react';
+import { useRouter } from 'next/navigation';
+import useAuth from '@/providers/useAuth';
 
 export default function TemplateBuilder() {
+  const router = useRouter();
+  const { user } = useAuth();
   const [token, setToken] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
@@ -30,15 +34,23 @@ export default function TemplateBuilder() {
   }, []);
 
   const handleTemplateChange = (templateData: any) => {
+    console.log('Template data received:', {
+      id: templateData.id,
+      name: templateData.name,
+      schema: templateData.schema,
+      fields: templateData.fields,
+      document_urls: templateData.document_urls,
+      preview_url: templateData.preview_url
+    });
     setPendingTemplate(templateData);
   };
 
   const handleSaveClick = async () => {
-    if (!pendingTemplate) {
-      alert('No template changes to save');
+    if (!pendingTemplate || !user?.uid) {
+      alert('No template changes to save or user not authenticated');
       return;
     }
-
+  
     setIsSaving(true);
     try {
       const response = await fetch('/api/templates/save', {
@@ -46,22 +58,29 @@ export default function TemplateBuilder() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(pendingTemplate),
+        body: JSON.stringify({
+          ...pendingTemplate,
+          userId: user.uid
+        }),
       });
-
+  
       if (!response.ok) {
         throw new Error('Failed to save template');
       }
-
-      alert('Template saved successfully');
-      setPendingTemplate(null); // Clear pending changes after successful save
+  
+      const result = await response.json();
+      
+      if (result.success) {
+        alert('Template saved successfully');
+        router.push('/dashboard/productivity/templates');
+      }
     } catch (err) {
       setError('Failed to save template');
+      console.error(err);
     } finally {
       setIsSaving(false);
     }
   };
-
   if (error) {
     return <div className="p-4 text-red-500">Error: {error}</div>;
   }
@@ -70,13 +89,19 @@ export default function TemplateBuilder() {
     <div className="w-full h-screen">
       {token ? (
         <>
-          <div className="p-4 bg-white border-b">
+          <div className="p-4 bg-white border-b flex justify-between items-center">
             <button
               onClick={handleSaveClick}
               disabled={isSaving || !pendingTemplate}
               className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
             >
               {isSaving ? 'Saving...' : 'Save Template'}
+            </button>
+            <button
+              onClick={() => router.push('/dashboard/productivity/templates')}
+              className="px-4 py-2 text-gray-600 hover:text-gray-800"
+            >
+              Cancel
             </button>
           </div>
           <DocusealBuilder 
@@ -92,4 +117,4 @@ export default function TemplateBuilder() {
       )}
     </div>
   );
-} 
+}

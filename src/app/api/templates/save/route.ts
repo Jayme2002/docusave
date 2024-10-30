@@ -1,15 +1,38 @@
 import { NextResponse } from 'next/server';
+import { db } from '@/firebase/config';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 export async function POST(request: Request) {
   try {
     const templateData = await request.json();
+    console.log('Received template data:', templateData);
     
-    // TODO: Add your logic to save the template data
-    // This could be saving to a database, external service, etc.
-    console.log('Template data received:', templateData);
+    if (!templateData.userId) {
+      return NextResponse.json({ error: 'User ID is required' }, { status: 401 });
+    }
 
-    // For now, we'll just return a success response
-    return NextResponse.json({ success: true });
+    // Extract relevant data from the Docuseal template
+    const cleanData = {
+      userId: templateData.userId,
+      name: templateData.name || 'Untitled Template',
+      createdAt: serverTimestamp(),
+      external_id: templateData.id,
+      document_urls: templateData.document_urls || [],
+      preview_url: templateData.preview_url || null,
+      schema: templateData.schema || [],
+      fields: templateData.fields || []
+    };
+
+    console.log('Saving to Firebase:', cleanData);
+
+    // Save to Firebase
+    const docRef = await addDoc(collection(db, "templates"), cleanData);
+    console.log('Saved template with ID:', docRef.id);
+
+    return NextResponse.json({ 
+      success: true, 
+      templateId: docRef.id 
+    });
   } catch (error) {
     console.error('Error saving template:', error);
     return NextResponse.json(
