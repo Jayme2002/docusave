@@ -1,54 +1,95 @@
-"use client";
+'use client';
 
-import useAuth from "@/providers/useAuth";
-import { DocusealBuilder } from '@docuseal/react';
 import { useState, useEffect } from 'react';
+import { DocusealBuilder } from '@docuseal/react';
 
 export default function TemplateBuilder() {
-  const { user } = useAuth();
-  const [token, setToken] = useState<string>();
-  const [error, setError] = useState<string>();
+  const [token, setToken] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [pendingTemplate, setPendingTemplate] = useState<any>(null);
 
   useEffect(() => {
-    if (user?.email) {
-      fetch('/api/docuseal/builder_token', {
+    const fetchToken = async () => {
+      try {
+        const response = await fetch('/api/docuseal');
+        const data = await response.json();
+        
+        if (data.error) {
+          setError(data.error);
+          return;
+        }
+
+        setToken(data.jwt);
+      } catch (err) {
+        setError('Failed to initialize form builder');
+      }
+    };
+
+    fetchToken();
+  }, []);
+
+  const handleTemplateChange = (templateData: any) => {
+    setPendingTemplate(templateData);
+  };
+
+  const handleSaveClick = async () => {
+    if (!pendingTemplate) {
+      alert('No template changes to save');
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      const response = await fetch('/api/templates/save', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          userEmail: user.email
-        })
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.token) {
-            setToken(data.token);
-          } else {
-            setError(data.error || 'Failed to get token');
-          }
-        })
-        .catch((error) => {
-          setError(error.message);
-          console.error('Error fetching builder token:', error);
-        });
+        body: JSON.stringify(pendingTemplate),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to save template');
+      }
+
+      alert('Template saved successfully');
+      setPendingTemplate(null); // Clear pending changes after successful save
+    } catch (err) {
+      setError('Failed to save template');
+    } finally {
+      setIsSaving(false);
     }
-  }, [user?.email]);
+  };
+
+  if (error) {
+    return <div className="p-4 text-red-500">Error: {error}</div>;
+  }
 
   return (
-    <div className="w-full flex-1 shadow-lg h-full p-16 bg-zinc-50 rounded-xl">
-      <h1 className="text-2xl font-bold mb-4">Template Builder</h1>
-      {error ? (
-        <div className="text-red-500">Error: {error}</div>
-      ) : token ? (
-        <div className="w-full h-[calc(100vh-200px)]">
-          <DocusealBuilder token={token} />
-        </div>
+    <div className="w-full h-screen">
+      {token ? (
+        <>
+          <div className="p-4 bg-white border-b">
+            <button
+              onClick={handleSaveClick}
+              disabled={isSaving || !pendingTemplate}
+              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+            >
+              {isSaving ? 'Saving...' : 'Save Template'}
+            </button>
+          </div>
+          <DocusealBuilder 
+            token={token}
+            className="w-full h-[calc(100%-4rem)]"
+            onSave={handleTemplateChange}
+          />
+        </>
       ) : (
-        <div className="flex items-center justify-center h-[calc(100vh-200px)]">
-          <span className="loader" />
+        <div className="flex items-center justify-center h-full">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900" />
         </div>
       )}
     </div>
   );
-}
+} 
