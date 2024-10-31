@@ -50,6 +50,30 @@ export default function Templates() {
     fetchTemplates();
   }, [user]);
 
+  const handleDeleteTemplate = async (e: React.MouseEvent, templateId: string) => {
+    e.stopPropagation();
+    
+    if (!confirm('Are you sure you want to delete this template?')) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/templates/${templateId}/delete`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete template');
+      }
+
+      // Remove template from local state
+      setTemplates(templates.filter(template => template.id !== templateId));
+    } catch (err) {
+      console.error('Error deleting template:', err);
+      alert('Failed to delete template');
+    }
+  };
+
   if (loading) {
     return (
       <div className="w-full h-full flex items-center justify-center">
@@ -63,12 +87,12 @@ export default function Templates() {
   }
 
   return (
-    <div className="w-full flex-1 shadow-lg h-full p-8 bg-zinc-50 rounded-xl">
-      <div className="flex justify-between items-center mb-8">
+    <div className="w-full flex-1 shadow-lg h-full p-2 bg-zinc-50 rounded-xl">
+      <div className="flex justify-between items-center mb-2">
         <h1 className="text-2xl font-bold">Templates</h1>
         <button
           onClick={() => router.push('/dashboard/productivity/template-builder')}
-          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 flex items-center gap-2"
+          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 flex items-center gap-1"
         >
           <Icon icon="tabler:plus" className="size-5" />
           New Template
@@ -80,38 +104,46 @@ export default function Templates() {
           <p className="text-gray-500">No templates yet. Create your first template!</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-8 gap-3 px-0">
           {templates.map((template) => (
             <div
               key={template.id}
-              className="bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer"
+              className="bg-white p-3 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer w-[260px] mx-auto"
               onClick={() => router.push(`/dashboard/productivity/templates/${template.external_id}`)}
             >
               {template.preview_url ? (
                 <img
                   src={template.preview_url}
                   alt={template.name}
-                  className="w-full h-48 object-cover rounded-md mb-4"
+                  className="w-full h-72 object-cover rounded-md mb-4"
                 />
               ) : (
-                <div className="w-full h-48 bg-gray-100 rounded-md mb-4 flex items-center justify-center">
+                <div className="w-full h-72 bg-gray-100 rounded-md mb-4 flex items-center justify-center">
                   <Icon icon="tabler:file-text" className="size-12 text-gray-400" />
                 </div>
               )}
-              <h3 className="font-semibold text-lg mb-2">{template.name}</h3>
+              <h3 className="font-semibold text-lg mb-2 line-clamp-1">{template.name}</h3>
               <p className="text-sm text-gray-500">
                 Created {template.createdAt?.toDate().toLocaleDateString()}
               </p>
               <div className="flex justify-between items-center mt-2">
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    router.push(`/dashboard/productivity/template-builder/edit?id=${template.external_id}`);
-                  }}
-                  className="text-blue-500 hover:text-blue-600"
-                >
-                  <Icon icon="tabler:edit" className="size-5" />
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      router.push(`/dashboard/productivity/template-builder/edit?id=${template.external_id}&docId=${template.id}`);
+                    }}
+                    className="text-blue-500 hover:text-blue-600"
+                  >
+                    <Icon icon="tabler:edit" className="size-5" />
+                  </button>
+                  <button
+                    onClick={(e) => handleDeleteTemplate(e, template.id)}
+                    className="text-red-500 hover:text-red-600"
+                  >
+                    <Icon icon="tabler:trash" className="size-5" />
+                  </button>
+                </div>
               </div>
             </div>
           ))}

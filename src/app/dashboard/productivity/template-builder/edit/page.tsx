@@ -10,6 +10,7 @@ export default function EditTemplate() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const templateId = searchParams.get('id');
+  const docId = searchParams.get('docId');
   const { user } = useAuth();
   
   const [token, setToken] = useState<string | null>(null);
@@ -18,8 +19,8 @@ export default function EditTemplate() {
   const [pendingTemplate, setPendingTemplate] = useState<any>(null);
 
   useEffect(() => {
-    if (!templateId) {
-      setError('No template ID provided');
+    if (!templateId || !docId) {
+      setError('Missing template information');
       return;
     }
 
@@ -40,10 +41,11 @@ export default function EditTemplate() {
     };
 
     fetchTemplate();
-  }, [templateId]);
+  }, [templateId, docId]);
 
   const handleTemplateChange = async (templateData: any) => {
     try {
+      setIsSaving(true);
       // Fetch complete template data from Docuseal
       const response = await fetch(`/api/templates/fetch?templateId=${templateData.id}`);
       const data = await response.json();
@@ -52,50 +54,38 @@ export default function EditTemplate() {
         throw new Error(data.error);
       }
 
-      setPendingTemplate({
+      const updatedTemplate = {
         ...templateData,
         pdfUrl: data.pdfUrl,
         preview_url: data.previewUrl,
         docusealData: data.templateData
-      });
-    } catch (err) {
-      console.error('Error fetching template details:', err);
-      setError('Failed to fetch template details');
-    }
-  };
+      };
 
-  const handleSaveClick = async () => {
-    if (!pendingTemplate || !user?.uid) {
-      alert('No template changes to save or user not authenticated');
-      return;
-    }
-
-    setIsSaving(true);
-    try {
-      const response = await fetch(`/api/templates/${templateId}/update`, {
+      // Use the Firestore document ID for the update
+      const saveResponse = await fetch(`/api/templates/${docId}/update`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          ...pendingTemplate,
-          userId: user.uid,
+          ...updatedTemplate,
+          userId: user?.uid,
           templateId: templateId
         }),
       });
 
-      if (!response.ok) {
+      if (!saveResponse.ok) {
         throw new Error('Failed to update template');
       }
 
-      const result = await response.json();
+      const result = await saveResponse.json();
       
       if (result.success) {
         alert('Template updated successfully');
         router.push('/dashboard/productivity/templates');
       }
     } catch (err) {
-      console.error('Update error:', err);
+      console.error('Error updating template:', err);
       setError('Failed to update template');
     } finally {
       setIsSaving(false);
@@ -110,14 +100,7 @@ export default function EditTemplate() {
     <div className="w-full h-screen">
       {token ? (
         <>
-          <div className="p-4 bg-white border-b flex justify-between items-center">
-            <button
-              onClick={handleSaveClick}
-              disabled={isSaving || !pendingTemplate}
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
-            >
-              {isSaving ? 'Saving...' : 'Update Template'}
-            </button>
+          <div className="p-4 bg-white border-b flex justify-end items-center">
             <button
               onClick={() => router.push('/dashboard/productivity/templates')}
               className="px-4 py-2 text-gray-600 hover:text-gray-800"
@@ -130,6 +113,22 @@ export default function EditTemplate() {
             className="w-full h-[calc(100%-4rem)]"
             onSave={handleTemplateChange}
             autosave={false}
+            customCss={`
+              #save_button {
+                background-color: rgb(37 99 235) !important;
+                color: white !important;
+                border-radius: 0.375rem !important;
+                padding: 0.5rem 1rem !important;
+                font-weight: 600 !important;
+              }
+              #save_button:hover {
+                background-color: rgb(29 78 216) !important;
+              }
+              #save_button:disabled {
+                opacity: 0.5 !important;
+                cursor: not-allowed !important;
+              }
+            `}
           />
         </>
       ) : (
