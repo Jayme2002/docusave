@@ -102,6 +102,17 @@ export default function Templates() {
               <p className="text-sm text-gray-500">
                 Created {template.createdAt?.toDate().toLocaleDateString()}
               </p>
+              <div className="flex justify-between items-center mt-2">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    router.push(`/dashboard/productivity/template-builder/edit?id=${template.external_id}`);
+                  }}
+                  className="text-blue-500 hover:text-blue-600"
+                >
+                  <Icon icon="tabler:edit" className="size-5" />
+                </button>
+              </div>
             </div>
           ))}
         </div>
