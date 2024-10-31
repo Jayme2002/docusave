@@ -38,7 +38,14 @@ export default function Templates() {
           ...doc.data()
         })) as Template[];
 
-        setTemplates(templatesData);
+        // Sort templates by createdAt in descending order (newest first)
+        const sortedTemplates = templatesData.sort((a, b) => {
+          const dateA = a.createdAt?.toDate() || new Date(0);
+          const dateB = b.createdAt?.toDate() || new Date(0);
+          return dateB.getTime() - dateA.getTime();
+        });
+
+        setTemplates(sortedTemplates);
       } catch (err) {
         console.error('Error fetching templates:', err);
         setError('Failed to load templates');
@@ -109,7 +116,7 @@ export default function Templates() {
             <div
               key={template.id}
               className="bg-white p-3 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer w-[260px] mx-auto"
-              onClick={() => router.push(`/dashboard/productivity/templates/${template.external_id}`)}
+              onClick={() => router.push(`/dashboard/productivity/templates/${template.external_id}/send`)}
             >
               {template.preview_url ? (
                 <img
