@@ -25,7 +25,7 @@ function AuthLayout({ children }: { children: React.ReactNode }) {
           >
             <Icon icon="mdi:anvil" className="size-8 text-blue-500" />
             <span className="-mt-2">
-              LifeForge<span className="text-blue-500 text-3xl">.</span>
+              DocuSave<span className="text-blue-500 text-3xl">.</span>
             </span>
           </Link>
         </header>

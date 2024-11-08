@@ -15,7 +15,7 @@ function Navbar() {
         <Link href="/" className="flex items-center justify-center gap-3">
           <Icon icon="mdi:anvil" className="size-10 text-blue-500" />
           <h1 className="text-2xl font-semibold -mt-1">
-            Lifeforge
+            DocuSave
             <span className="text-blue-500 text-3xl pl-0.5">.</span>
           </h1>
         </Link>

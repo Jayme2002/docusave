@@ -35,10 +35,10 @@ export default function DashboardLayout({
             <div className="p-4 flex-1 flex flex-col">
               <div className="flex items-center justify-between mb-6 gap-4">
                 <div className="flex items-center gap-3">
-                  <Icon icon="mdi:anvil" className="size-8 text-blue-500" />
+                  <Icon icon="mdi:document" className="size-8 text-blue-500" />
                   <h1 className="text-xl font-semibold">
-                    Lifeforge
-                    <span className="text-blue-500 text-xl pl-0.5">.</span>
+                    DocuSave
+                    <span className="text-blue-500 text-xl pl-0.5"></span>
                   </h1>
                 </div>
                 <button>
@@ -114,61 +114,7 @@ export default function DashboardLayout({
                   <Icon icon="tabler:template" className="size-6" />
                   Template Builder
                 </Link>
-                <Link
-                  href="/dashboard/productivity/calendar"
-                  className={`flex items-center gap-3 tracking-wide p-3 text-zinc-500 hover:bg-zinc-200/50 transition-all rounded-md ${
-                    pathname === "/dashboard/productivity/calendar" ? "bg-zinc-200/70" : ""
-                  }`}
-                >
-                  <Icon icon="tabler:calendar" className="size-6" />
-                  Calendar
-                </Link>
-                <Link
-                  href="/dashboard/productivity/pinboard"
-                  className={`flex items-center gap-3 tracking-wide p-3 text-zinc-500 hover:bg-zinc-200/50 transition-all rounded-md ${
-                    pathname === "/dashboard/productivity/pinboard" ? "bg-zinc-200/70" : ""
-                  }`}
-                >
-                  <Icon icon="tabler:pin" className="size-6" />
-                  Pinboard
-                </Link>
-                <Link
-                  href="/dashboard/productivity/tasks"
-                  className={`flex items-center gap-3 tracking-wide p-3 text-zinc-500 hover:bg-zinc-200/50 transition-all rounded-md ${
-                    pathname === "/dashboard/productivity/tasks" ? "bg-zinc-200/70" : ""
-                  }`}
-                >
-                  <Icon icon="tabler:list" className="size-6" />
-                  Tasks
-                </Link>
-                <Link
-                  href="/dashboard/productivity/time-tracker"
-                  className={`flex items-center gap-3 tracking-wide p-3 text-zinc-500 hover:bg-zinc-200/50 transition-all rounded-md ${
-                    pathname === "/dashboard/productivity/time-tracker" ? "bg-zinc-200/70" : ""
-                  }`}
-                >
-                  <Icon icon="tabler:clock" className="size-6" />
-                  Time Tracker
-                </Link>
-                <h3 className="mt-4 mb-2 text-zinc-400/70 font-medium tracking-wide">
-                  Storage
-                </h3>
-                <div className="flex items-center gap-3 tracking-wide p-3 text-zinc-500 hover:bg-zinc-200/50 transition-all rounded-md">
-                  <Icon icon="tabler:file" className="size-6" />
-                  Files
-                </div>
-                <div className="flex items-center gap-3 tracking-wide p-3 text-zinc-500 hover:bg-zinc-200/50 transition-all rounded-md">
-                  <Icon icon="tabler:photo" className="size-6" />
-                  Photos
-                </div>
-                <div className="flex items-center gap-3 tracking-wide p-3 text-zinc-500 hover:bg-zinc-200/50 transition-all rounded-md">
-                  <Icon icon="tabler:video" className="size-6" />
-                  Videos
-                </div>
-                <div className="flex items-center gap-3 tracking-wide p-3 text-zinc-500 hover:bg-zinc-200/50 transition-all rounded-md">
-                  <Icon icon="tabler:music" className="size-6" />
-                  Audio
-                </div>
+                
               </div>
             </div>
             <footer className="p-4 text-zinc-400 text-sm">

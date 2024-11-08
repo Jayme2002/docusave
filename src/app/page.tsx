@@ -20,10 +20,10 @@ export default function Home() {
     <main className="flex items-center flex-col justify-center w-full">
       <Navbar />
       <h2 className="text-5xl md:text-6xl font-semibold px-16 md:px-32 text-center">
-        Forge your life, one step at a time.
+        Cost Effective Esigning Solutions.
       </h2>
       <p className="text-zinc-400 dark:text-zinc-500 mt-10 mb-6 text-center px-16 text-xl">
-        An all-in-one platform for managing your life.
+        DocuSave.
       </p>
       <div className="flex items-center sm:flex-row flex-col-reverse gap-4 mt-12">
         <button
