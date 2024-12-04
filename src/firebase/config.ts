@@ -6,13 +6,13 @@ import { getStorage } from "firebase/storage";
 
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCPGYLAOnScfz1ei2thhjySZAESXofSOn0",
-  authDomain: "esigner-dd386.firebaseapp.com",
-  projectId: "esigner-dd386",
-  storageBucket: "esigner-dd386.firebasestorage.app",
-  messagingSenderId: "574902167447",
-  appId: "1:574902167447:web:9b4f6f79da63b0c42546d2",
-  measurementId: "G-CFMHHSCMJ6"
+  apiKey: "AIzaSyB0N1HRIB14nG7TWaFgoy7NEyG4RbGUQic",
+  authDomain: "esign-6a77b.firebaseapp.com",
+  projectId: "esign-6a77b",
+  storageBucket: "esign-6a77b.firebasestorage.app",
+  messagingSenderId: "798606690183",
+  appId: "1:798606690183:web:dcdd9a5cf8796f1e9a3522",
+  measurementId: "G-X0W3LJREBZ"
 };
 
 

@@ -64,9 +64,19 @@ export default function Templates() {
       return;
     }
 
+    if (!user?.uid) {
+      console.error('No user ID available');
+      alert('Authentication required');
+      return;
+    }
+
     try {
       const response = await fetch(`/api/templates/${templateId}/delete`, {
         method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'user-id': user.uid
+        } as HeadersInit
       });
 
       if (!response.ok) {
@@ -111,21 +121,21 @@ export default function Templates() {
           <p className="text-gray-500">No templates yet. Create your first template!</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-8 gap-3 px-0">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 px-0">
           {templates.map((template) => (
             <div
               key={template.id}
-              className="bg-white p-3 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer w-[260px] mx-auto"
+              className="bg-white p-3 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer w-full"
               onClick={() => router.push(`/dashboard/productivity/templates/${template.external_id}/send`)}
             >
               {template.preview_url ? (
                 <img
                   src={template.preview_url}
                   alt={template.name}
-                  className="w-full h-72 object-cover rounded-md mb-4"
+                  className="w-full h-60 object-cover rounded-md mb-4"
                 />
               ) : (
-                <div className="w-full h-72 bg-gray-100 rounded-md mb-4 flex items-center justify-center">
+                <div className="w-full h-60 bg-gray-100 rounded-md mb-4 flex items-center justify-center">
                   <Icon icon="tabler:file-text" className="size-12 text-gray-400" />
                 </div>
               )}

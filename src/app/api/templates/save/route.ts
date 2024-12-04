@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 import { db, storage } from '@/firebase/config';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { ref, uploadString, getDownloadURL } from 'firebase/storage';
-
 export async function POST(request: Request) {
   try {
     const templateData = await request.json();
@@ -45,7 +44,6 @@ export async function POST(request: Request) {
       schema: templateData.schema || [],
       fields: templateData.fields || []
     };
-
     const docRef = await addDoc(collection(db, "templates"), cleanData);
 
     return NextResponse.json({ 
