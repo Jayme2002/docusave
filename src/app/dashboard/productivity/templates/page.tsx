@@ -119,30 +119,26 @@ export default function Templates() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-zinc-50/50 to-white">
-      <div className="bg-white border-b">
-        <div className="max-w-[1600px] mx-auto p-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div>
-              <h1 className="text-2xl font-bold mb-1">Document Templates</h1>
-              <p className="text-zinc-600">Manage and organize your document templates</p>
-            </div>
-            <button
-              onClick={() => router.push('/dashboard/productivity/template-builder')}
-              className="shrink-0 px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 flex items-center gap-2 font-medium group transition-all"
-            >
-              <Icon icon="tabler:plus" className="size-5" />
-              New Template
-              <Icon 
-                icon="tabler:arrow-right" 
-                className="size-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" 
-              />
-            </button>
+    <div className="min-h-screen bg-gradient-to-b from-zinc-50/50 to-white p-8">
+      <div className="max-w-[1600px] mx-auto">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+          <div>
+            <h1 className="text-2xl font-bold mb-1">Document Templates</h1>
+            <p className="text-zinc-600">Manage and organize your document templates</p>
           </div>
+          <button
+            onClick={() => router.push('/dashboard/productivity/template-builder')}
+            className="shrink-0 px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 flex items-center gap-2 font-medium group transition-all"
+          >
+            <Icon icon="tabler:plus" className="size-5" />
+            New Template
+            <Icon 
+              icon="tabler:arrow-right" 
+              className="size-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" 
+            />
+          </button>
         </div>
-      </div>
 
-      <div className="max-w-[1600px] mx-auto p-6">
         <div className="flex flex-col sm:flex-row gap-4 items-center mb-6">
           <div className="relative flex-1 w-full">
             <input

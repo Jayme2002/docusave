@@ -2,7 +2,8 @@
 
 import { Icon } from "@iconify/react/dist/iconify.js";
 import Image from "next/image";
-import cover from "@/assets/cover.jpg";
+// Removing the direct import that's causing issues
+// import cover from "@/assets/cover.jpg";
 import React from "react";
 import useAuth from "@/providers/useAuth";
 import { redirect } from "next/navigation";
@@ -35,9 +36,11 @@ function AuthLayout({ children }: { children: React.ReactNode }) {
       </div>
       <div className="bg-blue-500 xl:block hidden dark:bg-blue-900 w-1/2 h-full">
         <Image
-          src={cover}
+          src="/assets/cover.jpg" 
           alt="cover"
           className="w-full h-full object-cover opacity-70 dark:opacity-50"
+          width={1920}
+          height={1080}
         />
       </div>
     </>

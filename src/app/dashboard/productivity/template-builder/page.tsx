@@ -100,11 +100,11 @@ export default function TemplateBuilder() {
             <p className="font-medium">{error}</p>
           </div>
           <button
-            onClick={() => router.push('/dashboard/productivity/templates')}
+            onClick={() => router.back()}
             className="mt-4 text-sm text-red-600 hover:text-red-700 font-medium flex items-center gap-2"
           >
             <Icon icon="tabler:arrow-left" className="size-4" />
-            Back to Templates
+            Go Back
           </button>
         </div>
       </div>
@@ -113,41 +113,31 @@ export default function TemplateBuilder() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <div className="h-16 bg-white border-b px-6 flex items-center justify-between sticky top-0 z-10">
-        <div className="flex items-center gap-4">
-          <button
-            onClick={() => router.push('/dashboard/productivity/templates')}
-            className="text-gray-600 hover:text-gray-800"
-          >
-            <Icon icon="tabler:arrow-left" className="size-5" />
-          </button>
-          <h1 className="text-xl font-semibold">New Template</h1>
-        </div>
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => router.push('/dashboard/productivity/templates')}
-            className="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleSaveClick}
-            disabled={isSaving || !pendingTemplate}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 font-medium"
-          >
-            {isSaving ? (
-              <>
-                <Icon icon="tabler:loader-2" className="size-5 animate-spin" />
-                Saving...
-              </>
-            ) : (
-              <>
-                <Icon icon="tabler:device-floppy" className="size-5" />
-                Save Template
-              </>
-            )}
-          </button>
-        </div>
+      <div className="flex items-center justify-between px-8 py-4">
+        <button
+          onClick={() => router.back()}
+          className="flex items-center gap-2 text-zinc-600 hover:text-zinc-800"
+        >
+          <Icon icon="tabler:arrow-left" className="size-5" />
+          <span>Back</span>
+        </button>
+        <button
+          onClick={handleSaveClick}
+          disabled={isSaving || !pendingTemplate}
+          className="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 font-medium"
+        >
+          {isSaving ? (
+            <>
+              <Icon icon="tabler:loader-2" className="size-5 animate-spin" />
+              Saving...
+            </>
+          ) : (
+            <>
+              <Icon icon="tabler:device-floppy" className="size-5" />
+              Save Template
+            </>
+          )}
+        </button>
       </div>
       <div className="flex-1">
         {token ? (
