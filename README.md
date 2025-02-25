@@ -1,4 +1,4 @@
-# DocuSave - Cost Effective Esigning Solutions (in development)
+# DocuSave - Cost Effective Esigning Solutions
 
 DocuSave is a versatile e-signing platform that allows users to create, manage, and send documents for signature with ease. This project provides a comprehensive solution for businesses of all sizes to handle their document signing needs efficiently.
 ![Screenshot 2025-02-25 at 2 01 10 PM](https://github.com/user-attachments/assets/17b452d2-105b-4052-adaa-f7b74048618b)
@@ -16,3 +16,9 @@ DocuSave is a versatile e-signing platform that allows users to create, manage, 
 
 **Pricing Plans**: (in progress) Flexible pricing options to suit different organizational needs including Basic, Pro, and Enterprise plans.
 ![Screenshot 2025-02-25 at 1 58 10 PM](https://github.com/user-attachments/assets/eeb78b44-40f9-4886-8894-ae58f23de962)
+
+
+## To Do:
+implement payment system.
+enhance ui
+document signing tracking
