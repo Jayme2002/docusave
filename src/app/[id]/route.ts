@@ -4,6 +4,11 @@ export async function GET(
   request: Request,
   { params }: { params: { id: string } }
 ) {
+  // Skip processing for favicon.ico requests
+  if (params.id === 'favicon.ico') {
+    return NextResponse.json({ error: 'Not a template' }, { status: 404 });
+  }
+
   const API_KEY = process.env.DOCUSEAL_API_KEY;
 
   if (!API_KEY) {
