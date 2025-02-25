@@ -10,7 +10,9 @@ import { db } from '@/firebase/config';
 interface Template {
   id: string;
   name: string;
-  preview_url: string;
+  preview_url: string | null;
+  preview_image_url?: string | null;
+  pdfUrl?: string | null;
   external_id: string;
   createdAt: any;
 }
@@ -128,11 +130,21 @@ export default function Templates() {
               className="bg-white p-3 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer w-full"
               onClick={() => router.push(`/dashboard/productivity/templates/${template.external_id}/send`)}
             >
-              {template.preview_url ? (
+              {(template.preview_url || template.preview_image_url) ? (
                 <img
-                  src={template.preview_url}
+                  src={template.preview_url || template.preview_image_url || ''}
                   alt={template.name}
                   className="w-full h-60 object-cover rounded-md mb-4"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                    const parent = e.currentTarget.parentNode as HTMLElement;
+                    if (parent) {
+                      const fallback = document.createElement('div');
+                      fallback.className = "w-full h-60 bg-gray-100 rounded-md mb-4 flex items-center justify-center";
+                      fallback.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="size-12 text-gray-400" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 3v4a1 1 0 0 0 1 1h4m-5 3v3m-4-3v6m-1-6v3m-5 9h12a2 2 0 0 0 2-2V7.5L14.5 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2"/></svg>';
+                      parent.appendChild(fallback);
+                    }
+                  }}
                 />
               ) : (
                 <div className="w-full h-60 bg-gray-100 rounded-md mb-4 flex items-center justify-center">
